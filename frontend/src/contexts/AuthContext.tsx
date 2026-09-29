@@ -7,6 +7,10 @@ interface AuthContextType {
   isLoading: boolean
   isAuthenticated: boolean
   user: { id: string; name: string; email: string; role: string } | null
+  accessToken: string | null
+  refreshToken: string | null
+  /** Replace the signed-in user, keeping the current tokens. */
+  setUser: (user: { id: string; name: string; email: string; role: string }) => void
   loginUser: (email: string, password: string) => Promise<void>
   logoutUser: () => void
 }
@@ -15,7 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
-  const { user, accessToken, setAuth, logout } = useAuthStore()
+  const { user, accessToken, refreshToken, setAuth, logout } = useAuthStore()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -58,12 +62,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     navigate('/login')
   }
 
+  // Update the profile in place without disturbing the tokens, so the
+  // user stays signed in after editing their name or email.
+  const setUser = (nextUser: { id: string; name: string; email: string; role: string }) => {
+    if (accessToken) {
+      setAuth(nextUser, accessToken, refreshToken || '')
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
         isLoading,
         isAuthenticated: !!accessToken && !!user,
         user,
+        accessToken,
+        refreshToken,
+        setUser,
         loginUser,
         logoutUser,
       }}

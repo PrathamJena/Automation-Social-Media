@@ -20,3 +20,24 @@ export const getCurrentUser = async () => {
   const response = await apiClient.get('/auth/me')
   return response.data
 }
+
+export interface ChangePasswordRequest {
+  current_password: string
+  new_password: string
+  confirm_password: string
+}
+
+export const changePassword = async (data: ChangePasswordRequest) => {
+  const response = await apiClient.post<{ message: string }>('/auth/change-password', data)
+  return response.data
+}
+
+export interface ProfileUpdateRequest {
+  name?: string
+  email?: string
+}
+
+export const updateProfile = async (data: ProfileUpdateRequest) => {
+  const response = await apiClient.put('/auth/profile', data)
+  return response.data
+}
