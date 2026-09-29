@@ -29,7 +29,10 @@ COPY nginx.conf /etc/nginx/conf.d/app.conf
 
 EXPOSE 80
 
+# Probe 127.0.0.1 rather than localhost: inside the container localhost
+# resolves to ::1, but nginx binds IPv4 only, so a localhost probe
+# fails with "connection refused" even though the site is fine.
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
-  CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
+  CMD wget --quiet --tries=1 --spider http://127.0.0.1/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
