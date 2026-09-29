@@ -25,7 +25,17 @@ FROM nginx:1.27-alpine AS runtime
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/app.conf
+# Files under /etc/nginx/templates are rendered with envsubst on start,
+# which is how the listen port follows the injected ${PORT}.
+COPY nginx.conf /etc/nginx/templates/app.conf.template
+
+# nginx's envsubst only substitutes variables that exist as real
+# environment variables and does not understand bash `${VAR:-default}`
+# syntax, so the defaults live here rather than in the template.
+#   compose -> 80 / backend:8000
+#   Railway -> injected PORT / a BACKEND_URL you set
+ENV PORT=80
+ENV BACKEND_URL=backend:8000
 
 EXPOSE 80
 
@@ -33,6 +43,6 @@ EXPOSE 80
 # resolves to ::1, but nginx binds IPv4 only, so a localhost probe
 # fails with "connection refused" even though the site is fine.
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
-  CMD wget --quiet --tries=1 --spider http://127.0.0.1/ || exit 1
+  CMD wget --quiet --tries=1 --spider "http://127.0.0.1:${PORT}/" || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
