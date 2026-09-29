@@ -135,6 +135,22 @@ services:
       redis:
         condition: service_healthy
 
+  # Public URL for demos. nginx serves the app on port 80 inside the
+  # container, so the tunnel points there rather than at the dev
+  # server's 5173.
+  #   docker compose --env-file .env.prod -f docker-compose.prod.yml \
+  #     --profile tunnel up -d tunnel
+  #   docker compose --env-file .env.prod -f docker-compose.prod.yml \
+  #     logs tunnel | grep trycloudflare
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: aksidhi-tunnel
+    command: tunnel --url http://frontend:80
+    depends_on:
+      - frontend
+    restart: unless-stopped
+    profiles: ["tunnel"]
+
 volumes:
   postgres_data:
   redis_data:
