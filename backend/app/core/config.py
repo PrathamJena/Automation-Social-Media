@@ -1,6 +1,12 @@
+import secrets
+import warnings
+
 from pydantic_settings import BaseSettings
 from typing import List
 from functools import lru_cache
+
+# Value that must never be used to sign real tokens.
+INSECURE_SECRET = "change_this_to_a_random_64_char_string"
 
 
 class Settings(BaseSettings):
@@ -10,7 +16,10 @@ class Settings(BaseSettings):
     APP_PORT: int = 8000
     FRONTEND_URL: str = "http://localhost:5173"
 
-    SECRET_KEY: str = "change_this_to_a_random_64_char_string"
+    # No usable default on purpose. In development an ephemeral key is
+    # generated (sessions reset on restart); in production the app refuses
+    # to start unless SECRET_KEY is set properly.
+    SECRET_KEY: str = ""
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     ALGORITHM: str = "HS256"
@@ -71,4 +80,32 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    return Settings()
+    settings = Settings()
+
+    is_production = settings.APP_ENV.lower() in {"production", "prod"}
+
+    if not settings.SECRET_KEY or settings.SECRET_KEY == INSECURE_SECRET:
+        if is_production:
+            raise RuntimeError(
+                "SECRET_KEY must be set to a unique random value in production. "
+                "Generate one with:\n"
+                "  python -c \"import secrets; print(secrets.token_urlsafe(64))\"\n"
+                "Then set SECRET_KEY in your .env file."
+            )
+
+        # Development convenience: a random key per process. This keeps
+        # nothing predictable in the source tree, and sessions simply
+        # expire when the container restarts.
+        settings.SECRET_KEY = secrets.token_urlsafe(64)
+        warnings.warn(
+            "SECRET_KEY is not set. Generated an ephemeral development key; "
+            "all sessions will be invalidated on restart. Set SECRET_KEY in .env "
+            "to keep sessions across restarts.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+
+    if is_production and len(settings.SECRET_KEY) < 32:
+        raise RuntimeError("SECRET_KEY must be at least 32 characters in production.")
+
+    return settings

@@ -1,3 +1,7 @@
+# Local secrets live in .env, which is git-ignored. Compose reads it
+# automatically for the ${VAR} placeholders used below.
+# Create it once with:  cp .env.example .env
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -30,18 +34,18 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/aksidhi
       REDIS_URL: redis://redis:6379/0
-      SECRET_KEY: change_this_to_a_random_64_char_string
-      FRONTEND_URL: http://localhost:5173
-      CORS_ORIGINS: http://localhost:5173
-      # When sharing publicly, add the tunnel hostname here, e.g.
-      # https://your-name.trycloudflare.com
+      # Falls back to SECRET_KEY from .env when present. The app refuses
+      # to start in production if it is still the placeholder value.
+      SECRET_KEY: ${SECRET_KEY:-}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
       S3_ENDPOINT: ""
       S3_BUCKET: aksidhi-media
-      AI_PROVIDER: ollama
+      AI_PROVIDER: ${AI_PROVIDER:-ollama}
       # host.docker.internal lets the container reach Ollama on your PC
-      OLLAMA_BASE_URL: http://host.docker.internal:11434
-      OLLAMA_MODEL: qwen3.5:4b
-      OLLAMA_VISION_MODEL: llava
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3.5:4b}
+      OLLAMA_VISION_MODEL: ${OLLAMA_VISION_MODEL:-llava}
     ports:
       - "8000:8000"
     depends_on:
