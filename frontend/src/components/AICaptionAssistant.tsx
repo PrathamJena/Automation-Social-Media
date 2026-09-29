@@ -91,7 +91,7 @@ export default function AICaptionAssistant({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
-              className="glass-card p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+              className="glass-card p-5 sm:p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">

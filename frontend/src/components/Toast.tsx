@@ -27,7 +27,7 @@ const borders = {
 
 export default function Toast({ toasts, onRemove }: ToastProps) {
   return (
-    <div className="fixed bottom-6 right-6 z-50 space-y-3">
+    <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:w-80 z-50 space-y-3">
       <AnimatePresence>
         {toasts.map((toast) => (
           <motion.div
@@ -36,7 +36,7 @@ export default function Toast({ toasts, onRemove }: ToastProps) {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 50, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className={`glass-card p-4 w-80 border ${borders[toast.type]}`}
+            className={`glass-card p-4 w-full border ${borders[toast.type]}`}
           >
             <div className="flex items-start gap-3">
               {icons[toast.type]}

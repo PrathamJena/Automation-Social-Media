@@ -16,7 +16,7 @@ export default function EmptyState({ icon: Icon, title, description, action }: E
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card p-12 text-center"
+      className="glass-card p-8 sm:p-12 text-center"
     >
       <div className="w-16 h-16 rounded-2xl bg-white/4 flex items-center justify-center mx-auto mb-4">
         <Icon className="w-8 h-8 text-soft-gray" />

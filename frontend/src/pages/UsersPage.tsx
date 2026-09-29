@@ -198,7 +198,7 @@ export default function UsersPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card p-6 w-full max-w-md"
+            className="glass-card p-5 sm:p-6 w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">

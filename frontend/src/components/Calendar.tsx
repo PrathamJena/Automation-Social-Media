@@ -114,14 +114,20 @@ export default function Calendar({
 
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-7 gap-2 mb-2">
-          {weekDays.map((day) => (
-            <div key={day} className="text-center text-xs font-medium text-soft-gray py-2">
-              {day}
+        {/* A 7-column month grid is unreadable on a phone, so below
+            sm the calendar scrolls horizontally at a usable cell size
+            rather than shrinking into slivers. */}
+        <div className="-mx-4 sm:mx-0 overflow-x-auto">
+          <div className="min-w-[560px] sm:min-w-0">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
+              {weekDays.map((day) => (
+                <div key={day} className="text-center text-xs font-medium text-soft-gray py-2">
+                  {day.slice(0, 1)}
+                  <span className="hidden sm:inline">{day.slice(1)}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {days.map((date: Date, index: number) => {
             const dayEvents = getEventsForDate(date)
             const isCurrentMonth = date.getMonth() === currentDate.getMonth()
@@ -176,6 +182,8 @@ export default function Calendar({
               </div>
             )
           })}
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -187,6 +195,9 @@ export default function Calendar({
 
     return (
       <div className="space-y-2">
+        {/* Same treatment as the month grid: scroll rather than squash. */}
+        <div className="-mx-4 sm:mx-0 overflow-x-auto">
+          <div className="min-w-[620px] sm:min-w-0">
         <div className="grid grid-cols-8 gap-2 mb-2">
           <div className="text-xs font-medium text-soft-gray py-2">Time</div>
           {days.map((day, index) => (
@@ -228,6 +239,8 @@ export default function Calendar({
               })}
             </div>
           ))}
+        </div>
+          </div>
         </div>
       </div>
     )
@@ -343,7 +356,7 @@ export default function Calendar({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="glass-card p-6 w-full max-w-md"
+              className="glass-card p-5 sm:p-6 w-full max-w-md"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-start justify-between mb-4">

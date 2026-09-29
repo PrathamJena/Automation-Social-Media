@@ -222,6 +222,11 @@
     background-color: var(--surface-subtle);
   }
 
+  /* Full-width controls on phones so tap targets stay comfortable. */
+  .form-stack {
+    @apply w-full;
+  }
+
   .page-enter {
     @apply opacity-0 translate-y-2;
   }

@@ -258,7 +258,7 @@ export default function MediaLibraryPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="glass-card p-6 w-full max-w-3xl"
+              className="glass-card p-4 sm:p-6 w-full max-w-3xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
