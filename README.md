@@ -19,6 +19,7 @@ optional local AI assistant, and a dark-first design system with a light theme.
 - [Configuration](#configuration)
 - [Project structure](#project-structure)
 - [Running the tests](#running-the-tests)
+- [Deploying](#deploying)
 - [AI assistant](#ai-assistant-optional)
 - [Connecting social accounts](#connecting-social-accounts)
 - [Sharing the app](#sharing-the-app)

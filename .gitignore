@@ -1,7 +1,10 @@
-# Environment / secrets - never commit these
+# Environment / secrets - never commit these.
+# The broad `.env*` rule also covers .env.prod, .env.staging and any
+# other variant that would otherwise leak credentials.
 .env
-.env.local
-.env.*.local
+.env.*
+*.env
+.envrc
 *.pem
 *.key
 secrets/
