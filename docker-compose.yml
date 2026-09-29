@@ -1,0 +1,87 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aksidhi-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aksidhi
+    ports:
+      # Bound to localhost only: the database must never be reachable
+      # from your local network or the public internet.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: aksidhi-redis
+    command: redis-server --requirepass aksidhi-redis-secret
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aksidhi-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/aksidhi
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: change_this_to_a_random_64_char_string
+      FRONTEND_URL: http://localhost:5173
+      CORS_ORIGINS: http://localhost:5173
+      # When sharing publicly, add the tunnel hostname here, e.g.
+      # https://your-name.trycloudflare.com
+      S3_ENDPOINT: ""
+      S3_BUCKET: aksidhi-media
+      AI_PROVIDER: ollama
+      # host.docker.internal lets the container reach Ollama on your PC
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_MODEL: qwen3.5:4b
+      OLLAMA_VISION_MODEL: llava
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+      - media_data:/app/media
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aksidhi-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  # ---------------------------------------------------------------
+  # Cloudflare Tunnel - share the app over the internet.
+  # Start with:  docker compose --profile tunnel up -d tunnel
+  # The public URL is printed in the logs:
+  #   docker compose logs tunnel | grep trycloudflare
+  # Only the frontend port is published, so the database and Redis
+  # stay private.
+  # ---------------------------------------------------------------
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: aksidhi-tunnel
+    command: tunnel --url http://frontend:5173
+    depends_on:
+      - frontend
+    restart: unless-stopped
+    profiles: ["tunnel"]
+
+volumes:
+  postgres_data:
+  redis_data:
+  media_data:

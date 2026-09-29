@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0D0D0F" />
+    <title>AakSidhi Automation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      // Apply the saved theme before first paint so the page never flashes
+      // the wrong colours. Dark remains the default.
+      (function () {
+        try {
+          var stored = localStorage.getItem('aksidhi-theme')
+          var theme = stored === 'light' ? 'light' : 'dark'
+          var root = document.documentElement
+          root.setAttribute('data-theme', theme)
+          root.classList.toggle('dark', theme === 'dark')
+          root.style.backgroundColor = theme === 'dark' ? '#0D0D0F' : '#F4F1F2'
+        } catch (e) {
+          /* defaults already set on the html element */
+        }
+      })()
+    </script>
+  </head>
+  <body class="bg-matte-black text-soft-white antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

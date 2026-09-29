@@ -1,0 +1,353 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   DESIGN TOKENS
+   Dark is the default. Light is defined under [data-theme='light'].
+   ============================================================ */
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Surfaces (RGB channels for Tailwind opacity modifiers) */
+  --bg-base: 13 13 15;
+  --bg-elevated: 21 21 25;
+  --bg-raised: 26 26 31;
+  --surface-overlay: rgba(255, 255, 255, 0.04);
+  --surface-subtle: rgba(255, 255, 255, 0.06);
+  --surface-hover: rgba(255, 255, 255, 0.08);
+  --surface-active: rgba(255, 255, 255, 0.1);
+
+  /* Text */
+  --text-primary: 247 244 245;
+  --text-secondary: 167 161 164;
+  --text-inverse: 13 13 15;
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+
+  /* Accents */
+  --accent-cherry: 193 18 63;
+  --accent-cherry-light: 232 54 93;
+  --accent-cherry-dark: 142 18 54;
+  --accent-wine: 100 21 43;
+  --accent-wine-light: 139 29 58;
+  --accent-wine-dark: 58 13 29;
+  --accent-burgundy: 74 16 36;
+  --accent-soft: rgba(193, 18, 63, 0.1);
+
+  /* Ambient lighting */
+  --glow-cherry: rgba(193, 18, 63, 0.06);
+  --glow-wine: rgba(100, 21, 43, 0.06);
+
+  /* Shadows */
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --shadow-dropdown: 0 16px 40px 0 rgba(0, 0, 0, 0.45);
+
+  /* Field backgrounds (keep the frosted-glass feel) */
+  --field-bg: rgba(255, 255, 255, 0.04);
+
+  /* Table row hover */
+  --row-hover: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg-base: 244 241 242;
+  --bg-elevated: 255 255 255;
+  --bg-raised: 255 255 255;
+  --surface-overlay: rgba(13, 13, 15, 0.03);
+  --surface-subtle: rgba(13, 13, 15, 0.05);
+  --surface-hover: rgba(13, 13, 15, 0.07);
+  --surface-active: rgba(13, 13, 15, 0.1);
+
+  /* Text */
+  --text-primary: 26 17 20;
+  --text-secondary: 107 98 102;
+  --text-inverse: 255 255 255;
+
+  /* Borders */
+  --border-subtle: rgba(13, 13, 15, 0.1);
+  --border-strong: rgba(13, 13, 15, 0.16);
+
+  /* Accents stay recognisably the same brand */
+  --accent-cherry: 176 16 57;
+  --accent-cherry-light: 193 18 63;
+  --accent-cherry-dark: 142 18 54;
+  --accent-wine: 100 21 43;
+  --accent-wine-light: 139 29 58;
+  --accent-wine-dark: 58 13 29;
+  --accent-burgundy: 74 16 36;
+  --accent-soft: rgba(193, 18, 63, 0.08);
+
+  /* Ambient lighting - far subtler in daylight */
+  --glow-cherry: rgba(193, 18, 63, 0.05);
+  --glow-wine: rgba(100, 21, 43, 0.04);
+
+  /* Shadows - softer, warmer, daylight style */
+  --shadow-glass: 0 4px 20px 0 rgba(58, 13, 29, 0.08);
+  --shadow-dropdown: 0 12px 32px 0 rgba(58, 13, 29, 0.12);
+
+  /* Fields become solid white so text stays legible */
+  --field-bg: rgba(255, 255, 255, 0.9);
+
+  --row-hover: rgba(13, 13, 15, 0.03);
+}
+
+@layer base {
+  * {
+    border-color: var(--border-subtle);
+  }
+
+  body {
+    background-color: rgb(var(--bg-base));
+    color: rgb(var(--text-primary));
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Manrope', 'Inter', sans-serif;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-cherry/50 ring-offset-2;
+    --tw-ring-offset-color: rgb(var(--bg-base));
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: rgb(var(--text-primary));
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-xl rounded-2xl shadow-glass;
+    background-color: var(--surface-overlay);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-300 hover:-translate-y-0.5;
+  }
+
+  .glass-card-hover:hover {
+    background-color: var(--surface-subtle);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-glass), 0 0 20px rgb(var(--accent-cherry) / 0.15);
+  }
+
+  .btn-primary {
+    @apply text-white font-medium px-6 py-2.5 rounded-xl
+           transition-all duration-200 active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none;
+    background-color: rgb(var(--accent-cherry));
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: rgb(var(--accent-cherry-light));
+    box-shadow: 0 0 20px rgb(var(--accent-cherry) / 0.2);
+  }
+
+  .btn-secondary {
+    @apply font-medium px-6 py-2.5 rounded-xl
+           transition-all duration-200 active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--surface-subtle);
+    color: rgb(var(--text-primary));
+    border: 1px solid var(--border-subtle);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--surface-hover);
+    border-color: var(--border-strong);
+  }
+
+  .btn-danger {
+    @apply font-medium px-6 py-2.5 rounded-xl transition-all duration-200 active:scale-[0.98];
+    background-color: rgba(220, 38, 38, 0.12);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.25);
+  }
+
+  .btn-danger:hover {
+    background-color: rgba(220, 38, 38, 0.2);
+  }
+
+  .input-field {
+    @apply w-full rounded-xl px-4 py-3
+           placeholder:text-soft-gray/50
+           focus:outline-none focus:border-cherry/50 focus:ring-1 focus:ring-cherry/30
+           transition-all duration-200;
+    background-color: var(--field-bg);
+    border: 1px solid var(--border-subtle);
+    color: rgb(var(--text-primary));
+  }
+
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl
+           transition-all duration-200;
+    color: rgb(var(--text-secondary));
+  }
+
+  .sidebar-item:hover {
+    background-color: var(--surface-subtle);
+    color: rgb(var(--text-primary));
+  }
+
+  .sidebar-item-active {
+    background-color: var(--accent-soft);
+    color: rgb(var(--accent-cherry-light));
+    border: 1px solid rgba(193, 18, 63, 0.25);
+    box-shadow: 0 0 20px rgb(var(--accent-cherry) / 0.15);
+  }
+
+  .skeleton {
+    @apply rounded-lg animate-pulse;
+    background-color: var(--surface-subtle);
+  }
+
+  .page-enter {
+    @apply opacity-0 translate-y-2;
+  }
+
+  .page-enter-active {
+    @apply opacity-100 translate-y-0 transition-all duration-300 ease-out;
+  }
+
+  .stagger-children > * {
+    @apply opacity-0 translate-y-4;
+    animation: staggerFadeIn 0.4s ease-out forwards;
+  }
+
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+  .stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+  .stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+}
+
+@keyframes staggerFadeIn {
+  to {
+    @apply opacity-100 translate-y-0;
+  }
+}
+
+/* ============================================================
+   LIGHT-MODE ADAPTATION
+   Unlayered rules outrank Tailwind's layered utilities, which lets us
+   retarget the raw `white/N` overlays used across the app without
+   touching every component. Attribute matching also covers variants
+   such as `hover:bg-white/6`.
+   ============================================================ */
+
+[data-theme='light'] [class*='bg-white/'] {
+  background-color: var(--surface-overlay) !important;
+}
+
+[data-theme='light'] [class*='border-white/'] {
+  border-color: var(--border-subtle) !important;
+}
+
+[data-theme='light'] [class*='ring-white/'] {
+  --tw-ring-color: var(--border-subtle);
+}
+
+[data-theme='light'] .glass-card {
+  background-color: rgba(255, 255, 255, 0.82);
+  border-color: var(--border-subtle);
+}
+
+[data-theme='light'] .bg-matte-black {
+  background-color: rgb(var(--bg-base));
+}
+
+[data-theme='light'] .bg-matte-charcoal {
+  background-color: rgb(var(--bg-elevated));
+}
+
+[data-theme='light'] .text-soft-white {
+  color: rgb(var(--text-primary));
+}
+
+[data-theme='light'] .text-soft-gray {
+  color: rgb(var(--text-secondary));
+}
+
+/* In daylight the dark ring colour would halo every control */
+[data-theme='light'] .ring-offset-matte-black,
+[data-theme='light'] [class*='ring-offset-matte-black'] {
+  --tw-ring-offset-color: rgb(var(--bg-base));
+}
+
+/* Native form controls must follow the scheme or they stay dark */
+[data-theme='light'] input[type='date'],
+[data-theme='light'] input[type='time'],
+[data-theme='light'] input[type='datetime-local'],
+[data-theme='light'] select {
+  color-scheme: light;
+}
+
+[data-theme='light'] input[type='date']::-webkit-calendar-picker-indicator,
+[data-theme='light'] input[type='time']::-webkit-calendar-picker-indicator,
+[data-theme='light'] input[type='datetime-local']::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: 0.55;
+}
+
+[data-theme='light'] select option {
+  background-color: #ffffff;
+  color: rgb(var(--text-primary));
+}
+
+/* Table row hover + unread tint */
+[data-theme='light'] tr:hover {
+  background-color: var(--row-hover);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-active);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
